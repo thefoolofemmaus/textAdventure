@@ -27,7 +27,13 @@ public class TextProcessorServiceTests {
         Room mockRoom = new Room();
         mockRoom.setId(1);
         mockRoom.setTitle("Starting Room");
+        mockRoom.setNorth(2);
+
+        Room mockRoom2 = new Room();
+        mockRoom2.setId(2);
+        mockRoom2.setTitle("North Room");
         when(roomRepository.getReferenceById(1)).thenReturn(mockRoom);
+        when(roomRepository.getReferenceById(2)).thenReturn(mockRoom2);
     }
 
     @Test

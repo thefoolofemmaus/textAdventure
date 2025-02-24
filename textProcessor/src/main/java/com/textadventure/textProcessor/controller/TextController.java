@@ -2,13 +2,18 @@ package com.textadventure.textProcessor.controller;
 
 import com.textadventure.textProcessor.dto.TextRequest;
 import com.textadventure.textProcessor.dto.TextResponse;
+import com.textadventure.textProcessor.service.TextProcessorService;
+import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @RestController
+@AllArgsConstructor
 public class TextController {
+
+    private final TextProcessorService textProcessorService;
 
     @GetMapping(path = "/hello")
     public String helloWorld() { return "hello world"; }
@@ -25,6 +30,6 @@ public class TextController {
 
     @PostMapping(path = "/say")
     public TextResponse saySomething(@RequestBody TextRequest textRequest) {
-        return new TextResponse("You said " + textRequest.getMessage(), textRequest.getCurrentRoom());
+        return textProcessorService.processMessage(textRequest);
     }
 }

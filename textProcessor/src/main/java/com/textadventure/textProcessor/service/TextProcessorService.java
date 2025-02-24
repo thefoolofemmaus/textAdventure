@@ -1,6 +1,7 @@
 package com.textadventure.textProcessor.service;
 
 import com.textadventure.textProcessor.dto.TextRequest;
+import com.textadventure.textProcessor.dto.TextResponse;
 import com.textadventure.textProcessor.model.Room;
 import com.textadventure.textProcessor.pipeline.StanfordPipeline;
 import com.textadventure.textProcessor.repository.RoomRepository;
@@ -8,11 +9,12 @@ import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.pipeline.CoreDocument;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
-import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.List;
 
 @Service
@@ -28,7 +30,8 @@ public class TextProcessorService {
         this.roomRepository = roomRepository;
     }
 
-    public void processMessage(TextRequest textRequest) {
+    public TextResponse processMessage(TextRequest textRequest) {
+        TextResponse response = new TextResponse();
         if(stanfordCoreNLP == null) {
             stanfordCoreNLP = StanfordPipeline.getPipeline();
         }
@@ -57,8 +60,37 @@ public class TextProcessorService {
             }
         }
 
+        switch (verb) {
+            case "go" :
+                int goingRoom = goToRoom(currentRoom, adverb);
+                Room newRoom = roomRepository.getReferenceById(goingRoom);
+                response.setInRoom(newRoom.getId());
+                response.setMessage(newRoom.getDescription());
+                System.out.println("Going to " + goingRoom);
+                break;
+        }
+
         System.out.println("verb - " + verb);
         System.out.println("object - " + object);
         System.out.println("adverb - " + adverb);
+
+        return response;
+    }
+
+    private int goToRoom(Room currentRoom, String direction) {
+        return getPropertyValue(currentRoom, direction);
+    }
+
+    private int getPropertyValue(Room room, String propertyName) {
+        try {
+            Method method = Room.class.getMethod("get" + capitalize(propertyName));
+            return (int) method.invoke(room);
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private String capitalize(String str) {
+        return str.substring(0, 1).toUpperCase() + str.substring(1);
     }
 }

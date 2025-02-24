@@ -1,5 +1,7 @@
 package com.textadventure.textProcessor.controller;
 
+import com.textadventure.textProcessor.dto.TextRequest;
+import com.textadventure.textProcessor.dto.TextResponse;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -19,5 +21,10 @@ public class TextController {
         response.put("message", "Simon says: " + (simonValue != null ? simonValue.toString() : "nothing"));
 
         return response;
+    }
+
+    @PostMapping(path = "/say")
+    public TextResponse saySomething(@RequestBody TextRequest textRequest) {
+        return new TextResponse("You said " + textRequest.getMessage(), textRequest.getCurrentRoom());
     }
 }

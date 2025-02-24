@@ -24,6 +24,12 @@ public class WebConfig {
                         .allowedMethods("PUT")
                         .allowedHeaders("*")
                         .allowCredentials(false);
+
+                registry.addMapping("/say")
+                        .allowedOrigins("*")
+                        .allowedMethods("POST")
+                        .allowedHeaders("*")
+                        .allowCredentials(false);
             }
         };
     }

@@ -29,12 +29,12 @@ $text-color: #555;
   align-self: flex-start;
   word-wrap: break-word;
 
-  &.sender {
+  &.receiver {
     background-color: $chat-bubble-bg-sender;
     align-self: flex-start;
   }
 
-  &.receiver {
+  &.sender {
     background-color: $chat-bubble-bg-receiver;
     align-self: flex-end;
     text-align: right;

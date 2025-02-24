@@ -1,0 +1,78 @@
+$primary-color: #007bff;
+$primary-hover: #0056b3;
+$chat-bg: #f9f9f9;
+$chat-bubble-bg-sender: #d1e7fd;
+$chat-bubble-bg-receiver: #d4edda;
+$border-color: #ccc;
+$text-color: #555;
+
+.chat-container {
+  width: 100%;
+  max-width: 100vw;
+  height: 300px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  border: 1px solid $border-color;
+  border-radius: 10px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  background: $chat-bg;
+  box-sizing: border-box;
+}
+
+.chat-bubble {
+  padding: 8px 12px;
+  border-radius: 12px;
+  max-width: 75%;
+  align-self: flex-start;
+  word-wrap: break-word;
+
+  &.sender {
+    background-color: $chat-bubble-bg-sender;
+    align-self: flex-start;
+  }
+
+  &.receiver {
+    background-color: $chat-bubble-bg-receiver;
+    align-self: flex-end;
+    text-align: right;
+  }
+
+  .sender-name {
+    font-weight: bold;
+    font-size: 12px;
+    display: block;
+    margin-bottom: 2px;
+    color: $text-color;
+  }
+}
+
+.input-container {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+  width: 100%;
+  max-width: 100vw;
+
+  input {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid $border-color;
+    border-radius: 5px;
+  }
+
+  button {
+    padding: 8px 12px;
+    background-color: $primary-color;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+
+    &:hover {
+      background-color: $primary-hover;
+    }
+  }
+}

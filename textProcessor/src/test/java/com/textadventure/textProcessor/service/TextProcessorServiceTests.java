@@ -1,5 +1,7 @@
 package com.textadventure.textProcessor.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.textadventure.textProcessor.dto.TextRequest;
 import com.textadventure.textProcessor.dto.TextResponse;
 import com.textadventure.textProcessor.model.Room;
@@ -90,10 +92,12 @@ public class TextProcessorServiceTests {
     }
 
     private Room createRoom1() {
-        return new Room(1, "Starting room", "The room where you start", 2, 0, 0, 0);
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode jsonNode = objectMapper.createObjectNode();
+        return new Room(1, "Starting room", "The room where you start", 2, 0, 0, 0, jsonNode, null);
     }
 
     private Room createRoom2() {
-        return new Room(2, "The room to the north", "Test room to the north", 0, 0, 1, 0);
+        return new Room(2, "The room to the north", "Test room to the north", 0, 0, 1, 0, null, null);
     }
 }

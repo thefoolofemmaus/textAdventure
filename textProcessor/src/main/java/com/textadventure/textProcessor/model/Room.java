@@ -1,11 +1,14 @@
 package com.textadventure.textProcessor.model;
 
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import jakarta.persistence.Entity;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Data
 @Entity
@@ -13,14 +16,14 @@ import jakarta.persistence.Entity;
 @AllArgsConstructor
 public class Room {
     @Id
-    @GeneratedValue
-    Integer id;
-    String title;
-    String description;
-    Integer north;
-    Integer east;
-    Integer south;
-    Integer west;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+    private String title;
+    private String description;
+    private Integer north;
+    private Integer east;
+    private Integer south;
+    private Integer west;
 
     public Room() {
         this.north = 0;

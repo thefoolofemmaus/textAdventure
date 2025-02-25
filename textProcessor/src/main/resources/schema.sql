@@ -1,10 +1,10 @@
 drop table if exists ROOMS;
 create table ROOMS(
-    ID int not null AUTO_INCREMENT,
-    title varchar(100),
-    description varchar(100),
-    north int,
-    east int,
-    south int,
-    west int
+    id SERIAL PRIMARY KEY,
+    title TEXT NOT NULL,
+    description TEXT NOT NULL,
+    north INTEGER NOT NULL DEFAULT 0,
+    east INTEGER NOT NULL DEFAULT 0,
+    south INTEGER NOT NULL DEFAULT 0,
+    west INTEGER NOT NULL DEFAULT 0
 );

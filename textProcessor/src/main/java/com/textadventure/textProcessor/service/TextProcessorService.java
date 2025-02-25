@@ -1,5 +1,8 @@
 package com.textadventure.textProcessor.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.textadventure.textProcessor.dto.TextRequest;
 import com.textadventure.textProcessor.dto.TextResponse;
 import com.textadventure.textProcessor.model.Action;
@@ -29,6 +32,17 @@ public class TextProcessorService {
     public TextProcessorService(RoomRepository roomRepository) {
         this.stanfordCoreNLP = StanfordPipeline.getPipeline();
         this.roomRepository = roomRepository;
+    }
+
+    public void putTheRoom() {
+        Room newRoom = new Room();
+        newRoom.setNorth(4);
+        newRoom.setSouth(5);
+        newRoom.setEast(7);
+        newRoom.setWest(8);
+        newRoom.setTitle("New Room");
+        newRoom.setDescription("Programattically added room");
+        roomRepository.save(newRoom);
     }
 
     public TextResponse processMessage(TextRequest textRequest) {
@@ -81,10 +95,22 @@ public class TextProcessorService {
             case "go" :
                 handleVerbGo(action);
                 break;
+            case "look" :
+                handleVerbLook(action);
+                break;
             default :
                 action.setSuccess(false);
                 action.setMessage("I don't know how to " + action.getVerb());
                 break;
+        }
+    }
+
+    private void handleVerbLook(Action action) {
+        if (action.getAdverb().equals("around")) {
+            action.setSuccess(true);
+            action.setMessage(action.getStartingRoom().getDescription());
+        } else {
+
         }
     }
 

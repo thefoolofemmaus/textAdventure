@@ -46,6 +46,14 @@ public class TextProcessorServiceTests {
         assertEquals(resultList.size(), 6);
     }
 
+    @Test
+    void getPropertyValue_Test_north() throws Exception{
+        Method getPropertyValueMethod = TextProcessorService.class.getDeclaredMethod("getPropertyValue", Room.class, String.class);
+        getPropertyValueMethod.setAccessible(true);
+        int result = (int) getPropertyValueMethod.invoke(textProcessorService, createRoom1(), "north");
+        assertEquals(result, 2);
+    }
+
     private Room createRoom1() {
         return new Room(1, "Starting room", "The room where you start", 2, null, null, null);
     }

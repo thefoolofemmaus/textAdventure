@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.textadventure.textProcessor.dto.TextRequest;
 import com.textadventure.textProcessor.dto.TextResponse;
 import com.textadventure.textProcessor.model.Action;
+import com.textadventure.textProcessor.model.Item;
 import com.textadventure.textProcessor.model.Room;
 import com.textadventure.textProcessor.pipeline.StanfordPipeline;
 import com.textadventure.textProcessor.repository.RoomRepository;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -32,17 +34,6 @@ public class TextProcessorService {
     public TextProcessorService(RoomRepository roomRepository) {
         this.stanfordCoreNLP = StanfordPipeline.getPipeline();
         this.roomRepository = roomRepository;
-    }
-
-    public void putTheRoom() {
-        Room newRoom = new Room();
-        newRoom.setNorth(4);
-        newRoom.setSouth(5);
-        newRoom.setEast(7);
-        newRoom.setWest(8);
-        newRoom.setTitle("New Room");
-        newRoom.setDescription("Programattically added room");
-        roomRepository.save(newRoom);
     }
 
     public TextResponse processMessage(TextRequest textRequest) {

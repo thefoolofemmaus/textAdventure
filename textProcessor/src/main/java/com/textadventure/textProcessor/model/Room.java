@@ -1,14 +1,13 @@
 package com.textadventure.textProcessor.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.textadventure.textProcessor.converter.JsonBConverter;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 @Data
 @Entity
@@ -24,6 +23,11 @@ public class Room {
     private Integer east;
     private Integer south;
     private Integer west;
+
+    @Column(name = "items")
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Convert(converter = JsonBConverter.class)
+    private List<Item> items;
 
     public Room() {
         this.north = 0;

@@ -32,9 +32,4 @@ public class TextController {
     public TextResponse saySomething(@RequestBody TextRequest textRequest) {
         return textProcessorService.processMessage(textRequest);
     }
-
-    @PutMapping(path = "/addRoom")
-    public void putTheRoom() {
-        textProcessorService.putTheRoom();
-    }
 }

@@ -22,8 +22,9 @@ public class RoomController {
     }
 
     @PutMapping(path = "/room")
-    public void putANewRoomIn(@RequestBody Room room) {
+    public Room putANewRoomIn(@RequestBody Room room) {
         roomRepository.save(room);
+        return room;
     }
 
 }

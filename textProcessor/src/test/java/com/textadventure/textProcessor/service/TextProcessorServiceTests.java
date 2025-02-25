@@ -1,11 +1,10 @@
 package com.textadventure.textProcessor.service;
 
 import com.textadventure.textProcessor.dto.TextRequest;
+import com.textadventure.textProcessor.dto.TextResponse;
 import com.textadventure.textProcessor.model.Room;
 import com.textadventure.textProcessor.repository.RoomRepository;
 import edu.stanford.nlp.ling.CoreLabel;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -38,6 +37,42 @@ public class TextProcessorServiceTests {
     }
 
     @Test
+    void processMessageTest_GoBadDirection() {
+        when(roomRepository.getReferenceById(2)).thenReturn(createRoom2());
+        TextRequest textRequest = new TextRequest("Go north.", 2);
+        TextResponse response = textProcessorService.processMessage(textRequest);
+        assertEquals(response.getInRoom(), 2);
+        assertEquals(response.getMessage(), "You can't go north");
+    }
+    @Test
+    void processMessageTest_NoVerb() {
+        when(roomRepository.getReferenceById(2)).thenReturn(createRoom2());
+        TextRequest textRequest = new TextRequest("Beautiful north.", 2);
+        TextResponse response = textProcessorService.processMessage(textRequest);
+        assertEquals(response.getInRoom(), 2);
+        assertEquals(response.getMessage(), "I don't know what you mean: \"Beautiful north.\"");
+    }
+    @Test
+    void processMessageTest_BadVerb() {
+        when(roomRepository.getReferenceById(1)).thenReturn(createRoom1());
+        TextRequest textRequest = new TextRequest("Destroy north.", 1);
+        TextResponse response = textProcessorService.processMessage(textRequest);
+        assertEquals(response.getInRoom(), 1);
+        assertEquals(response.getMessage(), "I don't know how to destroy");
+    }
+
+    @Test
+    void processMessageTest_GoNorth() {
+        when(roomRepository.getReferenceById(1)).thenReturn(createRoom1());
+        when(roomRepository.getReferenceById(2)).thenReturn(createRoom2());
+
+        TextRequest textRequest = new TextRequest("Go north.", 1);
+        TextResponse response = textProcessorService.processMessage(textRequest);
+        assertEquals(response.getInRoom(), 2);
+        assertEquals(response.getMessage(), "The room to the north");
+    }
+
+    @Test
     void createCoreLableList_Test() throws Exception{
         String testString = "Hit the Troll with the sword";
         Method createCoreLableListMethod = TextProcessorService.class.getDeclaredMethod("createCoreLableList", String.class);
@@ -55,10 +90,10 @@ public class TextProcessorServiceTests {
     }
 
     private Room createRoom1() {
-        return new Room(1, "Starting room", "The room where you start", 2, null, null, null);
+        return new Room(1, "Starting room", "The room where you start", 2, 0, 0, 0);
     }
 
     private Room createRoom2() {
-        return new Room(2, "The room to the north", "Test room to the north", null, null, 1, null);
+        return new Room(2, "The room to the north", "Test room to the north", 0, 0, 1, 0);
     }
 }

@@ -9,4 +9,6 @@ public class Action {
     String verb;
     String adverb;
     String object;
+    boolean success;
+    String message;
 }

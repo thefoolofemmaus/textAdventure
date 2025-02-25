@@ -21,4 +21,11 @@ public class Room {
     Integer east;
     Integer south;
     Integer west;
+
+    public Room() {
+        this.north = 0;
+        this.east = 0;
+        this.south = 0;
+        this.west = 0;
+    }
 }

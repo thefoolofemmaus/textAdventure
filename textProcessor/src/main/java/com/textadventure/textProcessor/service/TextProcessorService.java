@@ -33,12 +33,32 @@ public class TextProcessorService {
 
     public TextResponse processMessage(TextRequest textRequest) {
         TextResponse response = new TextResponse();
+        response.setInRoom(textRequest.getCurrentRoom());
+
         Action action = new Action();
         action.setStartingRoom(roomRepository.getReferenceById(textRequest.getCurrentRoom()));
         action.setEndingRoom(action.getStartingRoom());
 
         List<CoreLabel> coreLabelList = createCoreLableList(textRequest.getMessage());
+        parseCoreLabelList(action, coreLabelList);
 
+        if(null != action.getVerb()) {
+            handleVerb(action);
+            if(action.isSuccess()) {
+                response.setInRoom(action.getEndingRoom().getId());
+                response.setMessage(action.getEndingRoom().getTitle());
+            } else {
+                response.setMessage(action.getMessage());
+            }
+
+        } else {
+            response.setMessage("I don't know what you mean: \"" + textRequest.getMessage() + "\"");
+        }
+
+        return response;
+    }
+
+    private void parseCoreLabelList(Action action, List<CoreLabel> coreLabelList) {
         for(CoreLabel coreLabel : coreLabelList) {
             String pos = coreLabel.get(CoreAnnotations.PartOfSpeechAnnotation.class);
             switch (pos.toUpperCase()) {
@@ -54,22 +74,28 @@ public class TextProcessorService {
                     break;
             }
         }
-
-        handleVerb(action);
-
-        response.setInRoom(action.getEndingRoom().getId());
-        response.setMessage(action.getEndingRoom().getTitle());
-
-        return response;
     }
 
     private void handleVerb(Action action) {
         switch (action.getVerb()) {
             case "go" :
-                int goingRoom = goToRoom(action.getStartingRoom(), action.getAdverb());
-                action.setEndingRoom(roomRepository.getReferenceById(goingRoom));
-                System.out.println("Going to " + goingRoom);
+                handleVerbGo(action);
                 break;
+            default :
+                action.setSuccess(false);
+                action.setMessage("I don't know how to " + action.getVerb());
+                break;
+        }
+    }
+
+    private void handleVerbGo(Action action) {
+        int goingRoom = goToRoom(action.getStartingRoom(), action.getAdverb());
+        if (0 == goingRoom) {
+            action.setMessage("You can't go " + action.getAdverb());
+            action.setSuccess(false);
+        } else  {
+            action.setEndingRoom(roomRepository.getReferenceById(goingRoom));
+            action.setSuccess(true);
         }
     }
 

@@ -2,6 +2,7 @@ package com.textadventure.textProcessor.service;
 
 import com.textadventure.textProcessor.dto.TextRequest;
 import com.textadventure.textProcessor.dto.TextResponse;
+import com.textadventure.textProcessor.model.Action;
 import com.textadventure.textProcessor.model.Room;
 import com.textadventure.textProcessor.pipeline.StanfordPipeline;
 import com.textadventure.textProcessor.repository.RoomRepository;
@@ -32,45 +33,44 @@ public class TextProcessorService {
 
     public TextResponse processMessage(TextRequest textRequest) {
         TextResponse response = new TextResponse();
-        Room currentRoom = roomRepository.getReferenceById(textRequest.getCurrentRoom());
+        Action action = new Action();
+        action.setStartingRoom(roomRepository.getReferenceById(textRequest.getCurrentRoom()));
+        action.setEndingRoom(action.getStartingRoom());
 
         List<CoreLabel> coreLabelList = createCoreLableList(textRequest.getMessage());
-
-        String verb = "";
-        String object = "";
-        String adverb = "";
 
         for(CoreLabel coreLabel : coreLabelList) {
             String pos = coreLabel.get(CoreAnnotations.PartOfSpeechAnnotation.class);
             switch (pos.toUpperCase()) {
                 case "VB" :
-                    verb = coreLabel.lemma();
+                    action.setVerb(coreLabel.lemma());
                     break;
                 case "RB" :
-                    adverb = coreLabel.lemma();
+                    action.setAdverb(coreLabel.lemma());
                     break;
                 case "NNP" :
                 case "NN" :
-                    object = coreLabel.lemma();
+                    action.setObject(coreLabel.lemma());
                     break;
             }
         }
 
-        switch (verb) {
+        handleVerb(action);
+
+        response.setInRoom(action.getEndingRoom().getId());
+        response.setMessage(action.getEndingRoom().getTitle());
+
+        return response;
+    }
+
+    private void handleVerb(Action action) {
+        switch (action.getVerb()) {
             case "go" :
-                int goingRoom = goToRoom(currentRoom, adverb);
-                Room newRoom = roomRepository.getReferenceById(goingRoom);
-                response.setInRoom(newRoom.getId());
-                response.setMessage(newRoom.getDescription());
+                int goingRoom = goToRoom(action.getStartingRoom(), action.getAdverb());
+                action.setEndingRoom(roomRepository.getReferenceById(goingRoom));
                 System.out.println("Going to " + goingRoom);
                 break;
         }
-
-        System.out.println("verb - " + verb);
-        System.out.println("object - " + object);
-        System.out.println("adverb - " + adverb);
-
-        return response;
     }
 
     private List<CoreLabel> createCoreLableList(String message) {

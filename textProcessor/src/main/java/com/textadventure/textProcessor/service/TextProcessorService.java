@@ -26,19 +26,15 @@ public class TextProcessorService {
 
     @Autowired
     public TextProcessorService(RoomRepository roomRepository) {
-        this.stanfordCoreNLP = StanfordPipeline.getPipeline(); // Initialize once in constructor
+        this.stanfordCoreNLP = StanfordPipeline.getPipeline();
         this.roomRepository = roomRepository;
     }
 
     public TextResponse processMessage(TextRequest textRequest) {
         TextResponse response = new TextResponse();
-        if(stanfordCoreNLP == null) {
-            stanfordCoreNLP = StanfordPipeline.getPipeline();
-        }
         Room currentRoom = roomRepository.getReferenceById(textRequest.getCurrentRoom());
-        CoreDocument coreDocument = new CoreDocument(textRequest.getMessage());
-        stanfordCoreNLP.annotate(coreDocument);
-        List<CoreLabel> coreLabelList = coreDocument.tokens();
+
+        List<CoreLabel> coreLabelList = createCoreLableList(textRequest.getMessage());
 
         String verb = "";
         String object = "";
@@ -75,6 +71,12 @@ public class TextProcessorService {
         System.out.println("adverb - " + adverb);
 
         return response;
+    }
+
+    private List<CoreLabel> createCoreLableList(String message) {
+        CoreDocument coreDocument = new CoreDocument(message);
+        stanfordCoreNLP.annotate(coreDocument);
+        return coreDocument.tokens();
     }
 
     private int goToRoom(Room currentRoom, String direction) {

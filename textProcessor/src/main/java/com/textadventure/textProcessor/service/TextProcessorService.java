@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -51,11 +52,9 @@ public class TextProcessorService {
             handleVerb(action);
             if(action.isSuccess()) {
                 response.setInRoom(action.getEndingRoom().getId());
-                response.setMessage(action.getEndingRoom().getTitle());
-            } else {
-                response.setMessage(action.getMessage());
+                //response.setMessage(action.getEndingRoom().getTitle());
             }
-
+            response.setMessage(action.getMessage());
         } else {
             response.setMessage("I don't know what you mean: \"" + textRequest.getMessage() + "\"");
         }
@@ -99,10 +98,20 @@ public class TextProcessorService {
     private void handleVerbLook(Action action) {
         if (action.getAdverb().equals("around")) {
             action.setSuccess(true);
-            action.setMessage(action.getStartingRoom().getDescription());
-        } else {
-
+            handleVerbLookRoom(action);
         }
+    }
+
+    private void handleVerbLookRoom(Action action) {
+        String description = "You are in the " + action.getStartingRoom().getTitle() + ".\\\\n" +
+                action.getStartingRoom().getDescription() + ".\\n";
+        if (null != action.getStartingRoom().getItems() && !action.getStartingRoom().getItems().isEmpty()) {
+            description += "Looking around you see the following: \\n";
+            for(Item item : action.getStartingRoom().getItems()) {
+                description += "A " + item.getName() + "\\n";
+            }
+        }
+        action.setMessage(description);
     }
 
     private void handleVerbGo(Action action) {

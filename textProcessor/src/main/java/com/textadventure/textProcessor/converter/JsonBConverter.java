@@ -3,32 +3,39 @@ package com.textadventure.textProcessor.converter;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.CollectionType;
+import com.textadventure.textProcessor.model.Item;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 @Converter(autoApply = true)
-public class JsonBConverter implements AttributeConverter<List<Map<String, Object>>, String> {
+public class JsonBConverter implements AttributeConverter<List<Item>, String> {
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
-    public String convertToDatabaseColumn(List<Map<String, Object>> attribute) {
+    public String convertToDatabaseColumn(List<Item> items) {
         try {
-            return (attribute == null) ? "{}" : objectMapper.writeValueAsString(attribute);
+            return objectMapper.writeValueAsString(items);
         } catch (JsonProcessingException e) {
-            return "{}"; // Return default empty JSON
+            throw new RuntimeException("Error converting List<Item> to JSON", e);
         }
     }
 
     @Override
-    public List<Map<String, Object>> convertToEntityAttribute(String json) {
+    public List<Item> convertToEntityAttribute(String json) {
+        if (json == null || json.isBlank()) {
+            return Collections.emptyList(); // Return an empty list instead of null
+        }
         try {
-            return objectMapper.readValue(json, new TypeReference<List<Map<String, Object>>>() {});
+            CollectionType listType = objectMapper.getTypeFactory().constructCollectionType(List.class, Item.class);
+            return objectMapper.readValue(json, listType);
         } catch (JsonProcessingException e) {
-            return new ArrayList<>(); // Return null if invalid JSON
+            throw new RuntimeException("Error converting JSON to List<Item>", e);
         }
     }
 }

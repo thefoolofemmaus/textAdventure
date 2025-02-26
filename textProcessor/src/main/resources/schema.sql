@@ -7,5 +7,6 @@ create table ROOMS(
     east INTEGER NOT NULL DEFAULT 0,
     south INTEGER NOT NULL DEFAULT 0,
     west INTEGER NOT NULL DEFAULT 0,
-    items JSONB NOT NULL DEFAULT '{}'::jsonb
+    items JSONB NOT NULL DEFAULT '{}'::jsonb,
+    creatures JSONB NOT NULL DEFAULT '{}'::jsonb
 );

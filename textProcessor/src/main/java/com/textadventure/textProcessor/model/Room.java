@@ -1,5 +1,6 @@
 package com.textadventure.textProcessor.model;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.textadventure.textProcessor.converter.JsonBConverter;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -28,6 +29,10 @@ public class Room {
     @JdbcTypeCode(SqlTypes.JSON)
     @Convert(converter = JsonBConverter.class)
     private List<Item> items;
+
+    @Column(name = "creatures")
+    @JdbcTypeCode(SqlTypes.JSON)
+    private JsonNode creatures;
 
     public Room() {
         this.north = 0;
